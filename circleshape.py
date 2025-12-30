@@ -1,5 +1,5 @@
 import pygame
-
+from constants import PLAYER_SPEED
 # Base class for game objects
 class CircleShape(pygame.sprite.Sprite):
     def __init__(self, x, y, radius):
@@ -20,3 +20,6 @@ class CircleShape(pygame.sprite.Sprite):
     def update(self, dt):
         # must override
         pass
+    
+    def collides_with(self, other):
+        return (abs(self.position.distance_to(other.position)) - abs(self.radius + other.radius)) <= 0 
