@@ -1,13 +1,22 @@
 import pygame
 import sys
 from logger import log_state, log_event
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, ASTEROID_MAX_RADIUS, ASTEROID_MIN_RADIUS
 from player import Player
 from shot import Shot
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 
 def main():
+    '''
+    Main function to run the Asteroids game.
+    Initializes the game, handles the game loop, updates game objects,
+    checks for collisions, and manages the score.
+    Args:
+        None
+    Returns:
+        None
+    '''
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
@@ -16,6 +25,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     gameclock = pygame.time.Clock()
     dt = 0
+    score = 0
     
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
@@ -40,24 +50,51 @@ def main():
         
         for asteroid in asteroids:
             if player.collides_with(asteroid):
-                end_game("player_hit")
+                end_game("player_hit", score)
             if player.hits_boundary():
-                end_game("window_boundary_hit")
+                end_game("window_boundary_hit", score)
         for asteroid in asteroids:
             for shot in shots:
                 if shot.collides_with(asteroid):
                     log_event("asteroid_shot")
                     shot.kill()
+                    gained_points = gain_points(asteroid)
+                    score += int(gained_points)
+                    print(f"Score: {score} points (+{gained_points})")
                     asteroid.split()
                 
         for player_draw in drawable:
             player_draw.draw(screen=screen)
         pygame.display.flip()
         
-        
-def end_game(message):
-     log_event("window_boundary_hit")
+
+def end_game(message, score):
+     '''
+     Handle end of game scenario.
+     Args:
+            message (str): The reason for game termination.
+            score (int): The final score of the player.
+     Returns:
+        None
+     '''
+     log_event(message)
      print("Game over")
+     print(f"Score: {score} points")
      sys.exit()
+
+def gain_points(asteroid):
+    '''
+    Gain points based on asteroid size. Smaller asteroids give more points.
+    Args:
+        asteroid (Asteroid): The asteroid that was destroyed.
+    Returns:
+        int: Points gained from destroying the asteroid.
+    '''
+    range = (ASTEROID_MAX_RADIUS - ASTEROID_MIN_RADIUS) / 10
+    points = (ASTEROID_MAX_RADIUS - asteroid.radius) // range
+    points = max(1, points)
+    points = int(points * 10)
+    return points
+
 if __name__ == "__main__":
     main()
