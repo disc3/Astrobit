@@ -40,10 +40,9 @@ def main():
         
         for asteroid in asteroids:
             if player.collides_with(asteroid):
-                log_event("player_hit")
-                print("Game over!")
-                sys.exit()
-        
+                end_game("player_hit")
+            if player.hits_boundary():
+                end_game("window_boundary_hit")
         for asteroid in asteroids:
             for shot in shots:
                 if shot.collides_with(asteroid):
@@ -56,6 +55,9 @@ def main():
         pygame.display.flip()
         
         
-        
+def end_game(message):
+     log_event("window_boundary_hit")
+     print("Game over")
+     sys.exit()
 if __name__ == "__main__":
     main()
