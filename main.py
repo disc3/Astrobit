@@ -62,7 +62,8 @@ def main():
                     score += int(gained_points)
                     print(f"Score: {score} points (+{gained_points})")
                     asteroid.split()
-                
+        show_score(screen, score)
+
         for player_draw in drawable:
             player_draw.draw(screen=screen)
         pygame.display.flip()
@@ -95,6 +96,18 @@ def gain_points(asteroid):
     points = max(1, points)
     points = int(points * 10)
     return points
-
+    
+def show_score(screen, score):
+    '''
+    Display the current score on the game screen.
+    Args:
+        screen (pygame.Surface): The surface to draw the score on.
+        score (int): The current score of the player.
+    Returns:
+        None
+    '''
+    font = pygame.font.Font('freesansbold.ttf', 16)
+    score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+    screen.blit(score_text, (10, 10))
 if __name__ == "__main__":
     main()
